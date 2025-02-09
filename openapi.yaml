@@ -1,0 +1,196 @@
+openapi: 3.0.0
+info:
+  title: DocBase API (メモ関連)
+  version: "2"
+  description: DocBaseのメモ検索と詳細取得APIのスキーマ
+servers:
+  - url: https://api.docbase.io
+components:
+  securitySchemes:
+    AccessToken:
+      type: apiKey
+      in: header
+      name: X-DocBaseToken
+  schemas:
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID
+        title:
+          type: string
+          description: タイトル
+        body:
+          type: string
+          description: 本文
+        draft:
+          type: boolean
+          description: 下書きかどうか
+        archived:
+          type: boolean
+          description: アーカイブされているかどうか
+        url:
+          type: string
+          description: URL
+        created_at:
+          type: string
+          format: date-time
+          description: 作成日時
+        updated_at:
+          type: string
+          format: date-time
+          description: 更新日時
+        scope:
+          type: string
+          description: 公開範囲
+        sharing_url:
+          type: string
+          nullable: true
+          description: 共有URL
+        tags:
+          type: array
+          description: タグ
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: タグ名
+        user:
+          type: object
+          description: ユーザー情報
+          properties:
+            id:
+              type: integer
+              description: ユーザーID
+            name:
+              type: string
+              description: ユーザー名
+            profile_image_url:
+              type: string
+              description: プロフィール画像URL
+        stars_count:
+          type: integer
+          description: スター数
+        good_jobs_count:
+          type: integer
+          description: Good Job数
+        comments:
+          type: array
+          description: コメント
+          items:
+            type: object
+            description: コメントのスキーマ(省略)
+        groups:
+          type: array
+          description: グループ
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: グループID
+              name:
+                type: string
+                description: グループ名
+        representative_image_url:
+          type: string
+          nullable: true
+          description: 代表画像URL
+        attachments:
+          type: array
+          description: 添付ファイル
+          items:
+            type: object
+            description: 添付ファイルのスキーマ(省略)
+security:
+  - AccessToken: []
+paths:
+  /teams/{domain}/posts:
+    get:
+      summary: メモを検索する
+      parameters:
+        - in: path
+          name: domain
+          schema:
+            type: string
+          required: true
+          description: チームドメイン
+        - in: query
+          name: q
+          schema:
+            type: string
+          required: true
+          description: 検索クエリ
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: ページ番号
+        - in: query
+          name: per_page
+          schema:
+            type: integer
+          description: 1ページあたりのアイテム数
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  posts:
+                    type: array
+                    description: メモ
+                    items:
+                      $ref: '#/components/schemas/Post'
+                  meta:
+                    type: object
+                    description: メタデータ
+                    properties:
+                      previous_page:
+                        type: string
+                        nullable: true
+                        description: 前のページのURL
+                      next_page:
+                        type: string
+                        nullable: true
+                        description: 次のページのURL
+                      total:
+                        type: integer
+                        description: 合計数
+        "400":
+          description: 不正なリクエスト
+        "403":
+          description: 認証エラー
+        "429":
+          description: リクエスト回数制限
+  /teams/{domain}/posts/{id}:
+    get:
+      summary: メモの詳細を取得する
+      parameters:
+        - in: path
+          name: domain
+          schema:
+            type: string
+          required: true
+          description: チームドメイン
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: メモID
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        "403":
+          description: 認証エラー
+        "404":
+          description: メモが見つからない
