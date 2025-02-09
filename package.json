@@ -2,14 +2,21 @@
   "name": "docbase-mcp-server",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
+  "bin": {
+    "server": "./dist/index.js"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.4.1",
     "openapi-typescript": "^7.6.1",
     "zod": "^3.24.1"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build:watch": "tsc -w"
   },
+  "files": [
+    "dist"
+  ],
   "keywords": [],
   "author": "",
   "license": "ISC",
