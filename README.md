@@ -1,5 +1,7 @@
 # DocBase MCP Server
 
+TBW
+
 ## Feature
 
 TBW
@@ -22,16 +24,12 @@ TBW
       ],
     },
     "env": {
-      "TEAM_ID": "<YOUR_TEAM_ID>",
+      "DOMAIN": "<YOUR_DOMAIN>",
       "TOKEN": "<YOUR_TOKEN>"
     }
   }
 }
 ```
-
-## Search Query Syntax
-
-TBW
 
 ## License
 

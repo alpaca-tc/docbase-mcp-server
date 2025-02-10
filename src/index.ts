@@ -1,60 +1,25 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
+import { getPosts as getPostsFromClient, getPost as getPostFromClient } from "./client";
+
+const domain = process.env.DOMAIN;
+const accessToken = process.env.TOKEN;
+
+if (!domain) {
+  console.error("DOMAIN environment variable is required");
+  process.exit(1);
+}
+
+if (!accessToken) {
+  console.error("TOKEN environment variable is required");
+  process.exit(1);
+}
 
 const server = new McpServer({
   name: "DocBase",
   version: "0.0.1",
 });
-
-const fetchPosts = (q: string | undefined) => {
-  return {
-    posts: [
-      {
-        id: 4,
-        title: "メモのタイトル",
-        body: "メモの本文",
-        draft: false,
-        archived: false,
-        url: "https://kray.docbase.io/posts/4",
-        created_at: "2016-04-15T18:19:03+09:00",
-        updated_at: "2016-04-15T18:19:03+09:00",
-        scope: "everyone",
-        sharing_url:
-          "https://docbase.io/posts/1/sharing/abcdefgh-0e81-4567-9876-1234567890ab",
-        tags: [{ name: "日報" }],
-        user: {
-          id: 3,
-          name: "user3",
-          profile_image_url: "https://image.docbase.io/uploads/aaa.gif",
-        },
-        stars_count: 1,
-        good_jobs_count: 2,
-        comments: [
-          {
-            id: 7,
-            body: "コメント本文",
-            created_at: "2016-05-13T17:07:18+09:00",
-            user: {
-              id: 2,
-              name: "user2",
-              profile_image_url: "https://image.docbase.io/uploads/aaa.gif",
-            },
-          },
-        ],
-        groups: [],
-      },
-      /*
-        …repeat
-      */
-    ],
-    meta: {
-      previous_page: null,
-      next_page: "https://api.docbase.io/teams/kray/posts?page=2&per_page=20",
-      total: 39,
-    },
-  };
-};
 
 const searchSyntax = `
 ## Search options
@@ -120,13 +85,39 @@ server.tool(
     q: z.string().optional().describe(`Query string\n${searchSyntax}`),
   },
   async ({ q }) => {
-    const response = fetchPosts(q);
+    const { data, error, response } = await getPostsFromClient(domain, { q: q || "" }, accessToken);
+
+    if (error) {
+      console.error(error);
+      const errorText = await response.text();
+      return {
+        content: [
+          {
+            type: "text",
+            text: errorText,
+          },
+        ],
+        isError: true,
+      };
+    }
+
+    if (!data) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: "No data returned from API",
+          },
+        ],
+        isError: true,
+      };
+    }
 
     return {
       content: [
         {
           type: "text",
-          text: `match posts: ${response.meta.total}`,
+          text: JSON.stringify(data, null, 2),
         },
       ],
     };
@@ -140,11 +131,39 @@ server.tool(
     id: z.number().int().describe("Post ID"),
   },
   async ({ id }) => {
+    const { data, error, response } = await getPostFromClient(domain, id, accessToken);
+
+    if (error) {
+      console.error(error);
+      const errorText = await response.text();
+      return {
+        content: [
+          {
+            type: "text",
+            text: errorText,
+          },
+        ],
+        isError: true,
+      };
+    }
+
+    if (!data) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: "No data returned from API",
+          },
+        ],
+        isError: true,
+      };
+    }
+
     return {
       content: [
         {
           type: "text",
-          text: `post id: ${id}`,
+          text: JSON.stringify(data, null, 2),
         },
       ],
     };
