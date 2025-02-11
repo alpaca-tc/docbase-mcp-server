@@ -44,21 +44,27 @@ export interface paths {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
                 /** @description 存在しないコメントにアクセス */
                 404: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
                 /** @description 一定時間のリクエスト回数が制限を超えた */
                 429: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
             };
         };
@@ -112,28 +118,36 @@ export interface paths {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
                 /** @description アクセストークンが不正、または指定チームが存在しない */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
                 /** @description 存在しないメモにアクセス */
                 404: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
                 /** @description 一定時間のリクエスト回数が制限を超えた */
                 429: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
             };
         };
@@ -191,14 +205,18 @@ export interface paths {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
                 /** @description 一定時間のリクエスト回数が制限を超えた */
                 429: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
             };
         };
@@ -247,14 +265,18 @@ export interface paths {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
                 /** @description 一定時間のリクエスト回数が制限を超えた */
                 429: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
             };
         };
@@ -304,21 +326,27 @@ export interface paths {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
                 /** @description 存在しないメモにアクセス */
                 404: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
                 /** @description 一定時間のリクエスト回数が制限を超えた */
                 429: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
             };
         };
@@ -367,21 +395,27 @@ export interface paths {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
                 /** @description 存在しないメモにアクセス */
                 404: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
                 /** @description 一定時間のリクエスト回数が制限を超えた */
                 429: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
             };
         };
@@ -478,14 +512,18 @@ export interface paths {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
                 /** @description 一定時間のリクエスト回数が制限を超えた */
                 429: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
             };
         };
@@ -524,21 +562,27 @@ export interface paths {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
                 /** @description アクセストークンが不正、または指定チームが存在しない */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
                 /** @description 一定時間のリクエスト回数が制限を超えた */
                 429: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
             };
         };
@@ -587,21 +631,27 @@ export interface paths {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
                 /** @description 存在しないメモにアクセス */
                 404: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
                 /** @description 一定時間のリクエスト回数が制限を超えた */
                 429: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
             };
         };
@@ -637,21 +687,27 @@ export interface paths {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
                 /** @description 存在しないメモにアクセス */
                 404: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
                 /** @description 一定時間のリクエスト回数が制限を超えた */
                 429: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
             };
         };
@@ -699,28 +755,36 @@ export interface paths {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
                 /** @description アクセストークンが不正、または指定チームが存在しない */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
                 /** @description 存在しないメモにアクセス */
                 404: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
                 /** @description 一定時間のリクエスト回数が制限を超えた */
                 429: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
                 };
             };
         };
