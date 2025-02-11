@@ -1,19 +1,19 @@
 # DocBase MCP Server
 
-TBW
+An MCP server implementation for interacting with the DocBase API.
 
-## Feature
+## Features
 
-TBW
+- Get posts from DocBase
 
 ## Tools
 
-- get_posts
-- get_post
+- `get_posts`: Get posts from DocBase.
+- `get_post`: Get a specific post from DocBase.
 
 ## Setup
 
-``` json
+```json
 {
   "mcpServers": {
     "docbase-mcp-server": {
@@ -22,14 +22,19 @@ TBW
         "tsx",
         "/path/to/repository/docbase-mcp-server/src/index.ts"
       ],
-    },
-    "env": {
-      "DOMAIN": "<YOUR_DOMAIN>",
-      "TOKEN": "<YOUR_TOKEN>"
+      "env": {
+        "DOMAIN": "<YOUR_DOMAIN>",
+        "TOKEN": "<YOUR_TOKEN>"
+      }
     }
   }
 }
 ```
+
+### Getting `DOMAIN` and `TOKEN`
+
+1. **DOMAIN**: Your DocBase team domain (e.g., `myteam` in `myteam.docbase.io`).
+2. **TOKEN**: Access token for the DocBase API. You can generate a token from your DocBase settings. See [document](https://help.docbase.io/posts/45703) for details.
 
 ## License
 
