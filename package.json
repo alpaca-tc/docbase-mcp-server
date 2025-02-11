@@ -1,9 +1,9 @@
 {
-  "name": "docbase-mcp-server",
-  "version": "1.0.0",
+  "name": "@f440/docbase-mcp-server",
+  "version": "0.0.1",
   "type": "module",
   "bin": {
-    "server": "dist/index.js"
+    "docbase-mcp-server": "dist/index.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.4.1",
@@ -12,20 +12,36 @@
     "zod": "^3.24.1"
   },
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
-    "generate": "openapi-typescript openapi.yaml -o src/types/openapi.ts"
+    "build": "npm run clean && tsc && shx chmod +x ./dist/index.js",
+    "watch": "tsc --watch",
+    "clean": "shx rm -rf ./dist/*",
+    "typegen": "openapi-typescript openapi.yaml -o src/types/openapi.ts",
+    "publish:dry-run": "npm run build && npm publish --dry-run"
   },
   "files": [
-    "dist",
-    "src/types"
+    "README.md",
+    "package.json",
+    "dist"
   ],
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "mcp",
+    "typescript"
+  ],
+  "author": "f440",
   "license": "MIT",
-  "description": "",
+  "description": "An MCP server implementation for interacting with the DocBase API.",
   "devDependencies": {
     "@types/node": "^22.13.1",
+    "shx": "^0.3.4",
     "typescript": "^5.7.3"
-  }
+  },
+  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/f440/docbase-mcp-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/f440/docbase-mcp-server/issues"
+  },
+  "homepage": "https://github.com/f440/docbase-mcp-server#readme"
 }

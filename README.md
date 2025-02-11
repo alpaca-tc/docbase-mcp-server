@@ -19,8 +19,8 @@ An MCP server implementation for interacting with the DocBase API.
     "docbase-mcp-server": {
       "command": "npx",
       "args": [
-        "tsx",
-        "/path/to/repository/docbase-mcp-server/src/index.ts"
+        "-y",
+        "@f440/docbase-mcp-server"
       ],
       "env": {
         "DOMAIN": "<YOUR_DOMAIN>",
