@@ -4,69 +4,196 @@
  */
 
 export interface paths {
-    "/teams/{domain}/posts": {
+    "/teams/{domain}/comments/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** メモを検索する */
-        get: {
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * コメントの削除
+         * @description 指定したドメインのチームのコメントを削除します。
+         */
+        delete: {
             parameters: {
-                query: {
-                    /** @description 検索クエリ */
-                    q: string;
-                    /** @description ページ番号 */
-                    page?: number;
-                    /** @description 1ページあたりのアイテム数 */
-                    per_page?: number;
-                };
+                query?: never;
                 header?: never;
                 path: {
-                    /** @description チームドメイン */
+                    /** @description チームのドメイン */
                     domain: string;
+                    /** @description コメントのID */
+                    id: number;
                 };
                 cookie?: never;
             };
             requestBody?: never;
             responses: {
-                /** @description 成功 */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            /** @description メモ */
-                            posts?: components["schemas"]["Post"][];
-                            /** @description メタデータ */
-                            meta?: {
-                                /** @description 前のページのURL */
-                                previous_page?: string | null;
-                                /** @description 次のページのURL */
-                                next_page?: string | null;
-                                /** @description 合計数 */
-                                total?: number;
-                            };
-                        };
-                    };
-                };
-                /** @description 不正なリクエスト */
-                400: {
+                /** @description コメントの削除に成功 */
+                204: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content?: never;
                 };
-                /** @description 認証エラー */
+                /** @description アクセストークンが不正、または指定チームが存在しない */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content?: never;
                 };
-                /** @description リクエスト回数制限 */
+                /** @description 存在しないコメントにアクセス */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 一定時間のリクエスト回数が制限を超えた */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/teams/{domain}/posts/{id}/comments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * コメントの投稿
+         * @description 指定したドメインのチームのメモに新しいコメントを投稿します。
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description チームのドメイン */
+                    domain: string;
+                    /** @description メモのID */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CommentRequest"];
+                };
+            };
+            responses: {
+                /** @description コメントの投稿に成功 */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Comment"];
+                    };
+                };
+                /** @description 不正なリクエストパラメータを指定している */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description アクセストークンが不正、または指定チームが存在しない */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 存在しないメモにアクセス */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 一定時間のリクエスト回数が制限を超えた */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/teams/{domain}/groups": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * グループ検索
+         * @description 指定したドメインのチームのグループを取得します。
+         *     取得できるグループは権限によります：
+         *     - オーナー、管理者：チームの全グループ
+         *     - ユーザー：所属しているグループ
+         *
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description 取得したいグループ名と完全に一致する文字列 */
+                    name?: string;
+                    /** @description ページ番号 */
+                    page?: number;
+                    /** @description 1ページのグループ数 */
+                    per_page?: number;
+                };
+                header?: never;
+                path: {
+                    /** @description チームのドメイン */
+                    domain: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description リクエスト成功 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Group"][];
+                    };
+                };
+                /** @description アクセストークンが不正、または指定チームが存在しない */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 一定時間のリクエスト回数が制限を超えた */
                 429: {
                     headers: {
                         [name: string]: unknown;
@@ -83,46 +210,47 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/teams/{domain}/posts/{id}": {
+    "/teams/{domain}/tags": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** メモの詳細を取得する */
+        /**
+         * タグの取得
+         * @description 指定したドメインのチームのタグを返します。
+         */
         get: {
             parameters: {
                 query?: never;
                 header?: never;
                 path: {
-                    /** @description チームドメイン */
+                    /** @description チームのドメイン */
                     domain: string;
-                    /** @description メモID */
-                    id: number;
                 };
                 cookie?: never;
             };
             requestBody?: never;
             responses: {
-                /** @description 成功 */
+                /** @description リクエスト成功 */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["Post"];
+                        "application/json": components["schemas"]["Tag"][];
                     };
                 };
-                /** @description 認証エラー */
+                /** @description アクセストークンが不正、または指定チームが存在しない */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content?: never;
                 };
-                /** @description メモが見つからない */
-                404: {
+                /** @description 一定時間のリクエスト回数が制限を超えた */
+                429: {
                     headers: {
                         [name: string]: unknown;
                     };
@@ -138,22 +266,589 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/teams/{domain}/posts/{post_id}/archive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * メモのアーカイブ
+         * @description 指定したメモをアーカイブします。
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description チームのドメイン */
+                    domain: string;
+                    /** @description メモのID */
+                    post_id: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description メモのアーカイブに成功 */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description アクセストークンが不正、または指定チームが存在しない */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 存在しないメモにアクセス */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 一定時間のリクエスト回数が制限を超えた */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/teams/{domain}/posts/{post_id}/unarchive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * メモのアーカイブ解除
+         * @description 指定したメモのアーカイブを解除します。
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description チームのドメイン */
+                    domain: string;
+                    /** @description メモのID */
+                    post_id: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description メモのアーカイブ解除に成功 */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description アクセストークンが不正、または指定チームが存在しない */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 存在しないメモにアクセス */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 一定時間のリクエスト回数が制限を超えた */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/teams/{domain}/posts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * メモの検索
+         * @description 指定したドメインのチームのメモを検索し、メモの一覧を取得します。
+         *
+         *     検索オプションを使用して、グループや投稿者、タグなどで絞り込むことができます。
+         *
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description 検索文字列。以下の検索オプションが利用可能：
+                     *     - title:keyword - タイトルで検索
+                     *     - body:keyword - 本文で検索
+                     *     - comments:keyword - コメントで検索
+                     *     - attachments:keyword - 添付ファイルで検索
+                     *     - author:userID - 投稿者で検索
+                     *     - author_id:numericUserID - ユーザIDで検索
+                     *     - commented_by:userID - コメント投稿者で検索
+                     *     - liked_by:userID - いいねした人で検索
+                     *     - tag:tagName - タグで検索
+                     *     - group:groupName - グループで検索
+                     *     - group_id:numericGroupID - グループIDで検索
+                     *     - missing:tag - タグなしで検索
+                     *     - has:star - スター付きで検索
+                     *     - is:draft - 下書きで検索
+                     *     - is:unread - 未読で検索
+                     *     - is:shared - 共有で検索
+                     *     - is:archived - アーカイブで検索
+                     *     - include:archive - アーカイブを含める
+                     *     - created_at:2018-01-01 - 作成日で検索
+                     *     - created_at:2018-01-01~2018-06-01 - 作成日の範囲で検索
+                     *     - changed_at:2018-01-01 - 更新日で検索
+                     *     - changed_at:2018-01-01~2018-06-01 - 更新日の範囲で検索
+                     *      */
+                    q?: string;
+                    /** @description ページ番号 */
+                    page?: number;
+                    /** @description 1ページのメモ数 */
+                    per_page?: number;
+                };
+                header?: never;
+                path: {
+                    /** @description チームのドメイン */
+                    domain: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description リクエスト成功 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            posts?: components["schemas"]["Post"][];
+                            meta?: {
+                                /**
+                                 * Format: uri
+                                 * @description 前のページのURL
+                                 */
+                                previous_page?: string | null;
+                                /**
+                                 * Format: uri
+                                 * @description 次のページのURL
+                                 */
+                                next_page?: string | null;
+                                /** @description 検索結果の総件数 */
+                                total?: number;
+                            };
+                        };
+                    };
+                };
+                /** @description アクセストークンが不正、または指定チームが存在しない */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 一定時間のリクエスト回数が制限を超えた */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        /**
+         * メモの投稿
+         * @description 指定したドメインのチームに新しいメモを投稿します。
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description チームのドメイン */
+                    domain: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["PostRequest"];
+                };
+            };
+            responses: {
+                /** @description メモの投稿に成功 */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Post"];
+                    };
+                };
+                /** @description 不正なリクエストパラメータを指定している */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description アクセストークンが不正、または指定チームが存在しない */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 一定時間のリクエスト回数が制限を超えた */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/teams/{domain}/posts/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * メモの詳細取得
+         * @description 指定したドメインのチームのメモのIDを指定して情報を取得します。
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description チームのドメイン */
+                    domain: string;
+                    /** @description メモのID */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description リクエスト成功 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Post"];
+                    };
+                };
+                /** @description アクセストークンが不正、または指定チームが存在しない */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 存在しないメモにアクセス */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 一定時間のリクエスト回数が制限を超えた */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        /**
+         * メモの削除
+         * @description 指定したドメインのチームの、指定したメモを削除します。
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description チームのドメイン */
+                    domain: string;
+                    /** @description メモのID */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description メモの削除に成功 */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description アクセストークンが不正、または指定チームが存在しない */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 存在しないメモにアクセス */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 一定時間のリクエスト回数が制限を超えた */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /**
+         * メモの更新
+         * @description 指定したドメインのチームの、指定したメモを更新します。
+         *
+         *     更新可能なパラメータには権限制限があります：
+         *     - draft: メモ作成者のみ
+         *     - scope: メモ作成者もしくはチームの管理者かオーナー
+         *     - groups: メモ作成者もしくはチームの管理者かオーナー
+         *
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description チームのドメイン */
+                    domain: string;
+                    /** @description メモのID */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["PostUpdateRequest"];
+                };
+            };
+            responses: {
+                /** @description メモの更新に成功 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Post"];
+                    };
+                };
+                /** @description 不正なリクエストパラメータを指定している */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description アクセストークンが不正、または指定チームが存在しない */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 存在しないメモにアクセス */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 一定時間のリクエスト回数が制限を超えた */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        Post: {
-            /** @description ID */
-            id?: number;
-            /** @description タイトル */
+        PostUpdateRequest: {
+            /** @description メモのタイトル */
             title?: string;
-            /** @description 本文 */
+            /** @description メモの本文 */
+            body?: string;
+            /** @description 下書き保存にするかどうか（メモ作成者のみ更新可能） */
+            draft?: boolean;
+            /**
+             * @description 通知するかどうか
+             * @default true
+             */
+            notice: boolean;
+            /** @description タグ名の配列（空配列を指定すると全タグを削除） */
+            tags?: string[];
+            /**
+             * @description 公開範囲（メモ作成者もしくはチームの管理者かオーナーのみ更新可能）
+             * @enum {string}
+             */
+            scope?: "everyone" | "group" | "private";
+            /** @description グループID配列（scopeがgroupの時のみ必須、メモ作成者もしくはチームの管理者かオーナーのみ更新可能） */
+            groups?: number[];
+        };
+        CommentRequest: {
+            /** @description コメント本文 */
+            body: string;
+            /**
+             * @description 通知するかどうか
+             * @default true
+             */
+            notice: boolean;
+            /** @description 投稿者のID（オーナー/管理者のみ使用可能） */
+            author_id?: number;
+            /**
+             * Format: date-time
+             * @description 投稿日時（オーナー/管理者のみ使用可能）
+             */
+            published_at?: string;
+        };
+        Comment: {
+            /** @description コメントID */
+            id?: number;
+            /** @description コメント本文 */
+            body?: string;
+            /**
+             * Format: date-time
+             * @description 作成日時
+             */
+            created_at?: string;
+            /** @description 投稿者情報 */
+            user?: {
+                /** @description ユーザID */
+                id?: number;
+                /** @description ユーザ名 */
+                name?: string;
+                /**
+                 * Format: uri
+                 * @description プロフィール画像URL
+                 */
+                profile_image_url?: string;
+            };
+        };
+        Group: {
+            /** @description グループID */
+            id?: number;
+            /** @description グループ名 */
+            name?: string;
+        };
+        Tag: {
+            /** @description タグ名 */
+            name?: string;
+        };
+        PostRequest: {
+            /** @description メモのタイトル */
+            title: string;
+            /** @description メモの本文 */
+            body: string;
+            /**
+             * @description 下書き保存にするかどうか
+             * @default false
+             */
+            draft: boolean;
+            /**
+             * @description 通知するかどうか
+             * @default true
+             */
+            notice: boolean;
+            /** @description タグ名の配列 */
+            tags?: string[];
+            /**
+             * @description 公開範囲
+             * @default everyone
+             * @enum {string}
+             */
+            scope: "everyone" | "group" | "private";
+            /** @description グループID配列（scopeがgroupの時のみ必須） */
+            groups?: number[];
+            /** @description 投稿者のID（オーナー/管理者のみ使用可能） */
+            author_id?: number;
+            /**
+             * Format: date-time
+             * @description 投稿日時（オーナー/管理者のみ使用可能）
+             */
+            published_at?: string;
+        };
+        Post: {
+            /** @description メモのID */
+            id?: number;
+            /** @description メモのタイトル */
+            title?: string;
+            /** @description メモの本文 */
             body?: string;
             /** @description 下書きかどうか */
             draft?: boolean;
             /** @description アーカイブされているかどうか */
             archived?: boolean;
-            /** @description URL */
+            /**
+             * Format: uri
+             * @description メモのURL
+             */
             url?: string;
             /**
              * Format: date-time
@@ -165,41 +860,69 @@ export interface components {
              * @description 更新日時
              */
             updated_at?: string;
-            /** @description 公開範囲 */
-            scope?: string;
-            /** @description 共有URL */
-            sharing_url?: string | null;
-            /** @description タグ */
+            /** @description タグ情報 */
             tags?: {
                 /** @description タグ名 */
                 name?: string;
             }[];
-            /** @description ユーザー情報 */
+            /** @description 公開範囲 */
+            scope?: string;
+            /**
+             * Format: uri
+             * @description 共有用URL
+             */
+            sharing_url?: string;
+            /**
+             * Format: uri
+             * @description 代表画像URL
+             */
+            representative_image_url?: string;
+            /** @description 投稿者情報 */
             user?: {
-                /** @description ユーザーID */
+                /** @description ユーザID */
                 id?: number;
-                /** @description ユーザー名 */
+                /** @description ユーザ名 */
                 name?: string;
-                /** @description プロフィール画像URL */
+                /**
+                 * Format: uri
+                 * @description プロフィール画像URL
+                 */
                 profile_image_url?: string;
             };
             /** @description スター数 */
             stars_count?: number;
-            /** @description Good Job数 */
+            /** @description いいね数 */
             good_jobs_count?: number;
-            /** @description コメント */
+            /** @description コメント情報 */
             comments?: Record<string, never>[];
-            /** @description グループ */
+            /** @description グループ情報 */
             groups?: {
                 /** @description グループID */
                 id?: number;
                 /** @description グループ名 */
                 name?: string;
             }[];
-            /** @description 代表画像URL */
-            representative_image_url?: string | null;
-            /** @description 添付ファイル */
-            attachments?: Record<string, never>[];
+            /** @description 添付ファイル情報 */
+            attachments?: {
+                /** @description 添付ファイルID */
+                id?: string;
+                /** @description ファイル名 */
+                name?: string;
+                /** @description ファイルサイズ */
+                size?: number;
+                /**
+                 * Format: uri
+                 * @description ファイルURL
+                 */
+                url?: string;
+                /** @description マークダウン形式のリンク */
+                markdown?: string;
+                /**
+                 * Format: date-time
+                 * @description 作成日時
+                 */
+                created_at?: string;
+            }[];
         };
     };
     responses: never;
