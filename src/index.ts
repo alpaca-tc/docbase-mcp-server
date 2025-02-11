@@ -1,7 +1,9 @@
+#!/usr/bin/env node
+
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import { getPosts as getPostsFromClient, getPost as getPostFromClient } from "./client";
+import { DocBaseClient } from "./client.js";
 
 const domain = process.env.DOMAIN;
 const accessToken = process.env.TOKEN;
@@ -82,10 +84,15 @@ server.tool(
   "get_posts",
   "Get posts from DocBase",
   {
-    q: z.string().optional().describe(`Query string\n${searchSyntax}`),
+    q: z
+      .string()
+      .optional()
+      .default("")
+      .describe(`Query string\n${searchSyntax}`),
   },
   async ({ q }) => {
-    const { data, error, response } = await getPostsFromClient(domain, { q: q || "" }, accessToken);
+    const client = new DocBaseClient({ domain, accessToken });
+    const { data, error, response } = await client.getPosts({ q });
 
     if (error) {
       console.error(error);
@@ -95,18 +102,6 @@ server.tool(
           {
             type: "text",
             text: errorText,
-          },
-        ],
-        isError: true,
-      };
-    }
-
-    if (!data) {
-      return {
-        content: [
-          {
-            type: "text",
-            text: "No data returned from API",
           },
         ],
         isError: true,
@@ -131,7 +126,8 @@ server.tool(
     id: z.number().int().describe("Post ID"),
   },
   async ({ id }) => {
-    const { data, error, response } = await getPostFromClient(domain, id, accessToken);
+    const client = new DocBaseClient({ domain, accessToken });
+    const { data, error, response } = await client.getPost(id);
 
     if (error) {
       console.error(error);
@@ -141,18 +137,6 @@ server.tool(
           {
             type: "text",
             text: errorText,
-          },
-        ],
-        isError: true,
-      };
-    }
-
-    if (!data) {
-      return {
-        content: [
-          {
-            type: "text",
-            text: "No data returned from API",
           },
         ],
         isError: true,

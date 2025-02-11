@@ -1,10 +1,9 @@
 {
   "name": "docbase-mcp-server",
   "version": "1.0.0",
-  "main": "index.js",
   "type": "module",
   "bin": {
-    "server": "./dist/index.js"
+    "server": "dist/index.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.4.1",
@@ -13,7 +12,8 @@
     "zod": "^3.24.1"
   },
   "scripts": {
-    "build:watch": "tsc -w",
+    "build": "tsc",
+    "watch": "tsc -w",
     "generate": "openapi-typescript openapi.yaml -o src/types/openapi.ts"
   },
   "files": [
