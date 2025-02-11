@@ -48,10 +48,22 @@ paths:
           description: コメントの削除に成功
         '403':
           description: アクセストークンが不正、または指定チームが存在しない
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: 存在しないコメントにアクセス
+          content:
+            application/json:
+              schema:
+                type: object
         '429':
           description: 一定時間のリクエスト回数が制限を超えた
+          content:
+            application/json:
+              schema:
+                type: object
 
   /teams/{domain}/posts/{id}/comments:
     post:
@@ -89,12 +101,28 @@ paths:
                 $ref: '#/components/schemas/Comment'
         '400':
           description: 不正なリクエストパラメータを指定している
+          content:
+            application/json:
+              schema:
+                type: object
         '403':
           description: アクセストークンが不正、または指定チームが存在しない
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: 存在しないメモにアクセス
+          content:
+            application/json:
+              schema:
+                type: object
         '429':
           description: 一定時間のリクエスト回数が制限を超えた
+          content:
+            application/json:
+              schema:
+                type: object
 
   /teams/{domain}/groups:
     get:
@@ -148,8 +176,16 @@ paths:
                   $ref: '#/components/schemas/Group'
         '403':
           description: アクセストークンが不正、または指定チームが存在しない
+          content:
+            application/json:
+              schema:
+                type: object
         '429':
           description: 一定時間のリクエスト回数が制限を超えた
+          content:
+            application/json:
+              schema:
+                type: object
 
   /teams/{domain}/tags:
     get:
@@ -177,8 +213,16 @@ paths:
                   $ref: '#/components/schemas/Tag'
         '403':
           description: アクセストークンが不正、または指定チームが存在しない
+          content:
+            application/json:
+              schema:
+                type: object
         '429':
           description: 一定時間のリクエスト回数が制限を超えた
+          content:
+            application/json:
+              schema:
+                type: object
 
   /teams/{domain}/posts/{post_id}/archive:
     put:
@@ -206,10 +250,22 @@ paths:
           description: メモのアーカイブに成功
         '403':
           description: アクセストークンが不正、または指定チームが存在しない
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: 存在しないメモにアクセス
+          content:
+            application/json:
+              schema:
+                type: object
         '429':
           description: 一定時間のリクエスト回数が制限を超えた
+          content:
+            application/json:
+              schema:
+                type: object
 
   /teams/{domain}/posts/{post_id}/unarchive:
     put:
@@ -237,10 +293,22 @@ paths:
           description: メモのアーカイブ解除に成功
         '403':
           description: アクセストークンが不正、または指定チームが存在しない
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: 存在しないメモにアクセス
+          content:
+            application/json:
+              schema:
+                type: object
         '429':
           description: 一定時間のリクエスト回数が制限を超えた
+          content:
+            application/json:
+              schema:
+                type: object
 
   /teams/{domain}/posts:
     get:
@@ -335,8 +403,16 @@ paths:
                         description: 検索結果の総件数
         '403':
           description: アクセストークンが不正、または指定チームが存在しない
+          content:
+            application/json:
+              schema:
+                type: object
         '429':
           description: 一定時間のリクエスト回数が制限を超えた
+          content:
+            application/json:
+              schema:
+                type: object
     post:
       summary: メモの投稿
       description: 指定したドメインのチームに新しいメモを投稿します。
@@ -366,10 +442,22 @@ paths:
                 $ref: '#/components/schemas/Post'
         '400':
           description: 不正なリクエストパラメータを指定している
+          content:
+            application/json:
+              schema:
+                type: object
         '403':
           description: アクセストークンが不正、または指定チームが存在しない
+          content:
+            application/json:
+              schema:
+                type: object
         '429':
           description: 一定時間のリクエスト回数が制限を超えた
+          content:
+            application/json:
+              schema:
+                type: object
 
   /teams/{domain}/posts/{id}:
     get:
@@ -401,10 +489,22 @@ paths:
                 $ref: '#/components/schemas/Post'
         '403':
           description: アクセストークンが不正、または指定チームが存在しない
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: 存在しないメモにアクセス
+          content:
+            application/json:
+              schema:
+                type: object
         '429':
           description: 一定時間のリクエスト回数が制限を超えた
+          content:
+            application/json:
+              schema:
+                type: object
     delete:
       summary: メモの削除
       description: 指定したドメインのチームの、指定したメモを削除します。
@@ -430,10 +530,22 @@ paths:
           description: メモの削除に成功
         '403':
           description: アクセストークンが不正、または指定チームが存在しない
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: 存在しないメモにアクセス
+          content:
+            application/json:
+              schema:
+                type: object
         '429':
           description: 一定時間のリクエスト回数が制限を超えた
+          content:
+            application/json:
+              schema:
+                type: object
     patch:
       summary: メモの更新
       description: |
@@ -475,12 +587,28 @@ paths:
                 $ref: '#/components/schemas/Post'
         '400':
           description: 不正なリクエストパラメータを指定している
+          content:
+            application/json:
+              schema:
+                type: object
         '403':
           description: アクセストークンが不正、または指定チームが存在しない
+          content:
+            application/json:
+              schema:
+                type: object
         '404':
           description: 存在しないメモにアクセス
+          content:
+            application/json:
+              schema:
+                type: object
         '429':
           description: 一定時間のリクエスト回数が制限を超えた
+          content:
+            application/json:
+              schema:
+                type: object
 
 components:
   securitySchemes:
