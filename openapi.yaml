@@ -1,29 +1,653 @@
 openapi: 3.0.0
 info:
-  title: DocBase API (メモ関連)
-  version: "2"
-  description: DocBaseのメモ検索と詳細取得APIのスキーマ
+  title: DocBase API
+  version: '2'
+  description: |
+    DocBase APIは、DocBaseのリソースにプログラマティックにアクセスするためのインターフェースを提供します。
+
+    ## 認証
+    全てのAPIリクエストには、DocBaseサービス内で取得したアクセストークンを`X-DocBaseToken`リクエストヘッダに付与する必要があります。
+
+    ## レート制限
+    ユーザ毎に1分5回までリクエストを受け付けます。レスポンスには以下のヘッダが付与されます：
+    - X-RateLimit-Limit: １時間あたりにリクエストを発行できる回数
+    - X-RateLimit-Remaining: X-RateLimitResetまでの間にリクエストを発行できる回数
+    - X-RateLimit-Reset: X-RateLimitRemainingがX-RateLimit-Limitにリセットされる時刻のUNIX時間
+
 servers:
   - url: https://api.docbase.io
+    description: DocBase API サーバー
+
+security:
+  - docbaseAuth: []
+
+paths:
+  /teams/{domain}/comments/{id}:
+    delete:
+      summary: コメントの削除
+      description: 指定したドメインのチームのコメントを削除します。
+      security:
+        - docbaseAuth: []
+      tags:
+        - comments
+      parameters:
+        - name: domain
+          in: path
+          required: true
+          schema:
+            type: string
+          description: チームのドメイン
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: コメントのID
+      responses:
+        '204':
+          description: コメントの削除に成功
+        '403':
+          description: アクセストークンが不正、または指定チームが存在しない
+        '404':
+          description: 存在しないコメントにアクセス
+        '429':
+          description: 一定時間のリクエスト回数が制限を超えた
+
+  /teams/{domain}/posts/{id}/comments:
+    post:
+      summary: コメントの投稿
+      description: 指定したドメインのチームのメモに新しいコメントを投稿します。
+      security:
+        - docbaseAuth: []
+      tags:
+        - comments
+      parameters:
+        - name: domain
+          in: path
+          required: true
+          schema:
+            type: string
+          description: チームのドメイン
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: メモのID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentRequest'
+      responses:
+        '201':
+          description: コメントの投稿に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '400':
+          description: 不正なリクエストパラメータを指定している
+        '403':
+          description: アクセストークンが不正、または指定チームが存在しない
+        '404':
+          description: 存在しないメモにアクセス
+        '429':
+          description: 一定時間のリクエスト回数が制限を超えた
+
+  /teams/{domain}/groups:
+    get:
+      summary: グループ検索
+      description: |
+        指定したドメインのチームのグループを取得します。
+        取得できるグループは権限によります：
+        - オーナー、管理者：チームの全グループ
+        - ユーザー：所属しているグループ
+      security:
+        - docbaseAuth: []
+      tags:
+        - groups
+      parameters:
+        - name: domain
+          in: path
+          required: true
+          schema:
+            type: string
+          description: チームのドメイン
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: 取得したいグループ名と完全に一致する文字列
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+          description: ページ番号
+        - name: per_page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 100
+            maximum: 200
+          description: 1ページのグループ数
+      responses:
+        '200':
+          description: リクエスト成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Group'
+        '403':
+          description: アクセストークンが不正、または指定チームが存在しない
+        '429':
+          description: 一定時間のリクエスト回数が制限を超えた
+
+  /teams/{domain}/tags:
+    get:
+      summary: タグの取得
+      description: 指定したドメインのチームのタグを返します。
+      security:
+        - docbaseAuth: []
+      tags:
+        - tags
+      parameters:
+        - name: domain
+          in: path
+          required: true
+          schema:
+            type: string
+          description: チームのドメイン
+      responses:
+        '200':
+          description: リクエスト成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+        '403':
+          description: アクセストークンが不正、または指定チームが存在しない
+        '429':
+          description: 一定時間のリクエスト回数が制限を超えた
+
+  /teams/{domain}/posts/{post_id}/archive:
+    put:
+      summary: メモのアーカイブ
+      description: 指定したメモをアーカイブします。
+      security:
+        - docbaseAuth: []
+      tags:
+        - posts
+      parameters:
+        - name: domain
+          in: path
+          required: true
+          schema:
+            type: string
+          description: チームのドメイン
+        - name: post_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: メモのID
+      responses:
+        '204':
+          description: メモのアーカイブに成功
+        '403':
+          description: アクセストークンが不正、または指定チームが存在しない
+        '404':
+          description: 存在しないメモにアクセス
+        '429':
+          description: 一定時間のリクエスト回数が制限を超えた
+
+  /teams/{domain}/posts/{post_id}/unarchive:
+    put:
+      summary: メモのアーカイブ解除
+      description: 指定したメモのアーカイブを解除します。
+      security:
+        - docbaseAuth: []
+      tags:
+        - posts
+      parameters:
+        - name: domain
+          in: path
+          required: true
+          schema:
+            type: string
+          description: チームのドメイン
+        - name: post_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: メモのID
+      responses:
+        '204':
+          description: メモのアーカイブ解除に成功
+        '403':
+          description: アクセストークンが不正、または指定チームが存在しない
+        '404':
+          description: 存在しないメモにアクセス
+        '429':
+          description: 一定時間のリクエスト回数が制限を超えた
+
+  /teams/{domain}/posts:
+    get:
+      summary: メモの検索
+      description: |
+        指定したドメインのチームのメモを検索し、メモの一覧を取得します。
+
+        検索オプションを使用して、グループや投稿者、タグなどで絞り込むことができます。
+      security:
+        - docbaseAuth: []
+      tags:
+        - posts
+      parameters:
+        - name: domain
+          in: path
+          required: true
+          schema:
+            type: string
+          description: チームのドメイン
+        - name: q
+          in: query
+          required: false
+          schema:
+            type: string
+          description: |
+            検索文字列。以下の検索オプションが利用可能：
+            - title:keyword - タイトルで検索
+            - body:keyword - 本文で検索
+            - comments:keyword - コメントで検索
+            - attachments:keyword - 添付ファイルで検索
+            - author:userID - 投稿者で検索
+            - author_id:numericUserID - ユーザIDで検索
+            - commented_by:userID - コメント投稿者で検索
+            - liked_by:userID - いいねした人で検索
+            - tag:tagName - タグで検索
+            - group:groupName - グループで検索
+            - group_id:numericGroupID - グループIDで検索
+            - missing:tag - タグなしで検索
+            - has:star - スター付きで検索
+            - is:draft - 下書きで検索
+            - is:unread - 未読で検索
+            - is:shared - 共有で検索
+            - is:archived - アーカイブで検索
+            - include:archive - アーカイブを含める
+            - created_at:2018-01-01 - 作成日で検索
+            - created_at:2018-01-01~2018-06-01 - 作成日の範囲で検索
+            - changed_at:2018-01-01 - 更新日で検索
+            - changed_at:2018-01-01~2018-06-01 - 更新日の範囲で検索
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+          description: ページ番号
+        - name: per_page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+          description: 1ページのメモ数
+      responses:
+        '200':
+          description: リクエスト成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  posts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Post'
+                  meta:
+                    type: object
+                    properties:
+                      previous_page:
+                        type: string
+                        format: uri
+                        nullable: true
+                        description: 前のページのURL
+                      next_page:
+                        type: string
+                        format: uri
+                        nullable: true
+                        description: 次のページのURL
+                      total:
+                        type: integer
+                        description: 検索結果の総件数
+        '403':
+          description: アクセストークンが不正、または指定チームが存在しない
+        '429':
+          description: 一定時間のリクエスト回数が制限を超えた
+    post:
+      summary: メモの投稿
+      description: 指定したドメインのチームに新しいメモを投稿します。
+      security:
+        - docbaseAuth: []
+      tags:
+        - posts
+      parameters:
+        - name: domain
+          in: path
+          required: true
+          schema:
+            type: string
+          description: チームのドメイン
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostRequest'
+      responses:
+        '201':
+          description: メモの投稿に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: 不正なリクエストパラメータを指定している
+        '403':
+          description: アクセストークンが不正、または指定チームが存在しない
+        '429':
+          description: 一定時間のリクエスト回数が制限を超えた
+
+  /teams/{domain}/posts/{id}:
+    get:
+      summary: メモの詳細取得
+      description: 指定したドメインのチームのメモのIDを指定して情報を取得します。
+      security:
+        - docbaseAuth: []
+      tags:
+        - posts
+      parameters:
+        - name: domain
+          in: path
+          required: true
+          schema:
+            type: string
+          description: チームのドメイン
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: メモのID
+      responses:
+        '200':
+          description: リクエスト成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '403':
+          description: アクセストークンが不正、または指定チームが存在しない
+        '404':
+          description: 存在しないメモにアクセス
+        '429':
+          description: 一定時間のリクエスト回数が制限を超えた
+    delete:
+      summary: メモの削除
+      description: 指定したドメインのチームの、指定したメモを削除します。
+      security:
+        - docbaseAuth: []
+      tags:
+        - posts
+      parameters:
+        - name: domain
+          in: path
+          required: true
+          schema:
+            type: string
+          description: チームのドメイン
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: メモのID
+      responses:
+        '204':
+          description: メモの削除に成功
+        '403':
+          description: アクセストークンが不正、または指定チームが存在しない
+        '404':
+          description: 存在しないメモにアクセス
+        '429':
+          description: 一定時間のリクエスト回数が制限を超えた
+    patch:
+      summary: メモの更新
+      description: |
+        指定したドメインのチームの、指定したメモを更新します。
+
+        更新可能なパラメータには権限制限があります：
+        - draft: メモ作成者のみ
+        - scope: メモ作成者もしくはチームの管理者かオーナー
+        - groups: メモ作成者もしくはチームの管理者かオーナー
+      security:
+        - docbaseAuth: []
+      tags:
+        - posts
+      parameters:
+        - name: domain
+          in: path
+          required: true
+          schema:
+            type: string
+          description: チームのドメイン
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: メモのID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostUpdateRequest'
+      responses:
+        '200':
+          description: メモの更新に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: 不正なリクエストパラメータを指定している
+        '403':
+          description: アクセストークンが不正、または指定チームが存在しない
+        '404':
+          description: 存在しないメモにアクセス
+        '429':
+          description: 一定時間のリクエスト回数が制限を超えた
+
 components:
   securitySchemes:
-    AccessToken:
+    docbaseAuth:
       type: apiKey
-      in: header
       name: X-DocBaseToken
+      in: header
+      description: DocBaseのアクセストークン
+
   schemas:
+    PostUpdateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: メモのタイトル
+        body:
+          type: string
+          description: メモの本文
+        draft:
+          type: boolean
+          description: 下書き保存にするかどうか（メモ作成者のみ更新可能）
+        notice:
+          type: boolean
+          description: 通知するかどうか
+          default: true
+        tags:
+          type: array
+          description: タグ名の配列（空配列を指定すると全タグを削除）
+          items:
+            type: string
+        scope:
+          type: string
+          description: 公開範囲（メモ作成者もしくはチームの管理者かオーナーのみ更新可能）
+          enum:
+            - everyone
+            - group
+            - private
+        groups:
+          type: array
+          description: グループID配列（scopeがgroupの時のみ必須、メモ作成者もしくはチームの管理者かオーナーのみ更新可能）
+          items:
+            type: integer
+
+    CommentRequest:
+      type: object
+      required:
+        - body
+      properties:
+        body:
+          type: string
+          description: コメント本文
+        notice:
+          type: boolean
+          description: 通知するかどうか
+          default: true
+        author_id:
+          type: integer
+          description: 投稿者のID（オーナー/管理者のみ使用可能）
+        published_at:
+          type: string
+          format: date-time
+          description: 投稿日時（オーナー/管理者のみ使用可能）
+
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: コメントID
+        body:
+          type: string
+          description: コメント本文
+        created_at:
+          type: string
+          format: date-time
+          description: 作成日時
+        user:
+          type: object
+          description: 投稿者情報
+          properties:
+            id:
+              type: integer
+              description: ユーザID
+            name:
+              type: string
+              description: ユーザ名
+            profile_image_url:
+              type: string
+              format: uri
+              description: プロフィール画像URL
+
+    Group:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: グループID
+        name:
+          type: string
+          description: グループ名
+
+    Tag:
+      type: object
+      properties:
+        name:
+          type: string
+          description: タグ名
+
+    PostRequest:
+      type: object
+      required:
+        - title
+        - body
+      properties:
+        title:
+          type: string
+          description: メモのタイトル
+        body:
+          type: string
+          description: メモの本文
+        draft:
+          type: boolean
+          description: 下書き保存にするかどうか
+          default: false
+        notice:
+          type: boolean
+          description: 通知するかどうか
+          default: true
+        tags:
+          type: array
+          description: タグ名の配列
+          items:
+            type: string
+        scope:
+          type: string
+          description: 公開範囲
+          enum:
+            - everyone
+            - group
+            - private
+          default: everyone
+        groups:
+          type: array
+          description: グループID配列（scopeがgroupの時のみ必須）
+          items:
+            type: integer
+        author_id:
+          type: integer
+          description: 投稿者のID（オーナー/管理者のみ使用可能）
+        published_at:
+          type: string
+          format: date-time
+          description: 投稿日時（オーナー/管理者のみ使用可能）
+
     Post:
       type: object
       properties:
         id:
           type: integer
-          description: ID
+          description: メモのID
         title:
           type: string
-          description: タイトル
+          description: メモのタイトル
         body:
           type: string
-          description: 本文
+          description: メモの本文
         draft:
           type: boolean
           description: 下書きかどうか
@@ -32,7 +656,8 @@ components:
           description: アーカイブされているかどうか
         url:
           type: string
-          description: URL
+          format: uri
+          description: メモのURL
         created_at:
           type: string
           format: date-time
@@ -41,50 +666,54 @@ components:
           type: string
           format: date-time
           description: 更新日時
-        scope:
-          type: string
-          description: 公開範囲
-        sharing_url:
-          type: string
-          nullable: true
-          description: 共有URL
         tags:
           type: array
-          description: タグ
+          description: タグ情報
           items:
             type: object
             properties:
               name:
                 type: string
                 description: タグ名
+        scope:
+          type: string
+          description: 公開範囲
+        sharing_url:
+          type: string
+          format: uri
+          description: 共有用URL
+        representative_image_url:
+          type: string
+          format: uri
+          description: 代表画像URL
         user:
           type: object
-          description: ユーザー情報
+          description: 投稿者情報
           properties:
             id:
               type: integer
-              description: ユーザーID
+              description: ユーザID
             name:
               type: string
-              description: ユーザー名
+              description: ユーザ名
             profile_image_url:
               type: string
+              format: uri
               description: プロフィール画像URL
         stars_count:
           type: integer
           description: スター数
         good_jobs_count:
           type: integer
-          description: Good Job数
+          description: いいね数
         comments:
           type: array
-          description: コメント
+          description: コメント情報
           items:
             type: object
-            description: コメントのスキーマ(省略)
         groups:
           type: array
-          description: グループ
+          description: グループ情報
           items:
             type: object
             properties:
@@ -94,103 +723,29 @@ components:
               name:
                 type: string
                 description: グループ名
-        representative_image_url:
-          type: string
-          nullable: true
-          description: 代表画像URL
         attachments:
           type: array
-          description: 添付ファイル
+          description: 添付ファイル情報
           items:
             type: object
-            description: 添付ファイルのスキーマ(省略)
-security:
-  - AccessToken: []
-paths:
-  /teams/{domain}/posts:
-    get:
-      summary: メモを検索する
-      parameters:
-        - in: path
-          name: domain
-          schema:
-            type: string
-          required: true
-          description: チームドメイン
-        - in: query
-          name: q
-          schema:
-            type: string
-          required: true
-          description: 検索クエリ
-        - in: query
-          name: page
-          schema:
-            type: integer
-          description: ページ番号
-        - in: query
-          name: per_page
-          schema:
-            type: integer
-          description: 1ページあたりのアイテム数
-      responses:
-        "200":
-          description: 成功
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  posts:
-                    type: array
-                    description: メモ
-                    items:
-                      $ref: '#/components/schemas/Post'
-                  meta:
-                    type: object
-                    description: メタデータ
-                    properties:
-                      previous_page:
-                        type: string
-                        nullable: true
-                        description: 前のページのURL
-                      next_page:
-                        type: string
-                        nullable: true
-                        description: 次のページのURL
-                      total:
-                        type: integer
-                        description: 合計数
-        "400":
-          description: 不正なリクエスト
-        "403":
-          description: 認証エラー
-        "429":
-          description: リクエスト回数制限
-  /teams/{domain}/posts/{id}:
-    get:
-      summary: メモの詳細を取得する
-      parameters:
-        - in: path
-          name: domain
-          schema:
-            type: string
-          required: true
-          description: チームドメイン
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
-          description: メモID
-      responses:
-        "200":
-          description: 成功
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Post'
-        "403":
-          description: 認証エラー
-        "404":
-          description: メモが見つからない
+            properties:
+              id:
+                type: string
+                description: 添付ファイルID
+              name:
+                type: string
+                description: ファイル名
+              size:
+                type: integer
+                description: ファイルサイズ
+              url:
+                type: string
+                format: uri
+                description: ファイルURL
+              markdown:
+                type: string
+                description: マークダウン形式のリンク
+              created_at:
+                type: string
+                format: date-time
+                description: 作成日時
