@@ -123,11 +123,26 @@ server.tool(
   "get_post",
   "Get post from DocBase",
   {
-    id: z.number().int().describe("Post ID"),
+    id: z.string().describe("Post ID"),
   },
   async ({ id }) => {
+    if (!/^\d+$/.test(id)) {
+      const errorText = `${id} is not post ID`;
+      console.error(errorText);
+      return {
+        content: [
+          {
+            type: "text",
+            text: errorText,
+          },
+        ],
+        isError: true,
+      };
+    }
+
     const client = new DocBaseClient({ domain, accessToken });
-    const { data, error, response } = await client.getPost(id);
+    const numberId = parseInt(id, 10)
+    const { data, error, response } = await client.getPost(numberId);
 
     if (error) {
       console.error(error);
